@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
-import { LoginDto, RegisterDto } from 'src/dto';
+import { LoginDto, RegisterDto, UpdateDto } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -56,5 +56,36 @@ export class AuthService {
         { expiresIn: '1d', secret: this.configService.get('JWT_SECRET') },
       ),
     };
+  }
+
+  async me(payload: { id: string }) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: payload.id,
+      },
+    });
+
+    if (!user) {
+      throw new ForbiddenException('Something went wrong');
+    }
+
+    delete user.password;
+
+    return user;
+  }
+
+  async update(payload: { id: string }, data: UpdateDto) {
+    try {
+      const user = await this.prisma.user.update({
+        where: {
+          id: payload.id,
+        },
+        data,
+      });
+      delete user.password;
+      return user;
+    } catch (error) {
+      throw new ForbiddenException('Something went wrong');
+    }
   }
 }
