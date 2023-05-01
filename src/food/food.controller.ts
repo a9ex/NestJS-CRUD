@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/guard';
 import { FoodService } from './food.service';
-import { foodDto } from 'src/auth/dto/food.dto';
+import { foodDto } from './dto/food.dto';
 
 @UseGuards(JwtGuard)
 @Controller('food')
