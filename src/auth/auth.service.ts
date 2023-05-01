@@ -1,9 +1,9 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcryptjs';
 import { LoginDto, RegisterDto, UpdateDto } from './dto/auth.dto';
+import { PrismaService } from '../prisma/prisma.service';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -24,10 +24,7 @@ export class AuthService {
         },
       });
       return {
-        token: await this.jwtService.signAsync(
-          { id: user.id },
-          { expiresIn: '1d', secret: this.configService.get('JWT_SECRET') },
-        ),
+        token: await this.sign({ id: user.id }),
       };
     } catch (error) {
       if (error.code === 'P2002') {
@@ -51,10 +48,7 @@ export class AuthService {
       throw new ForbiddenException('Wrong email or password');
     }
     return {
-      token: await this.jwtService.signAsync(
-        { id: user.id },
-        { expiresIn: '1d', secret: this.configService.get('JWT_SECRET') },
-      ),
+      token: await this.sign({ id: user.id }),
     };
   }
 
@@ -70,7 +64,6 @@ export class AuthService {
     }
 
     delete user.password;
-
     return user;
   }
 
@@ -90,5 +83,12 @@ export class AuthService {
     } catch (error) {
       throw new ForbiddenException('Something went wrong');
     }
+  }
+
+  async sign(payload: { id: string }) {
+    return await this.jwtService.signAsync(payload, {
+      expiresIn: '1d',
+      secret: this.configService.get('JWT_SECRET'),
+    });
   }
 }
