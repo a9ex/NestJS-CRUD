@@ -6,7 +6,7 @@ import {
   Query,
   ParseIntPipe,
 } from '@nestjs/common';
-import { JwtGuard } from 'src/auth/guard';
+import { JwtGuard } from '../auth/guard';
 import { FoodService } from './food.service';
 import { foodDto } from './dto/food.dto';
 
