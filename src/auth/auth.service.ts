@@ -76,6 +76,9 @@ export class AuthService {
 
   async update(payload: { id: string }, data: UpdateDto) {
     try {
+      if (data.password) {
+        data.password = await bcrypt.hash(data.password, 10);
+      }
       const user = await this.prisma.user.update({
         where: {
           id: payload.id,
