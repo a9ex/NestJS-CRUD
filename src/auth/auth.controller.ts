@@ -8,6 +8,7 @@ import {
   UseGuards,
   HttpStatus,
   HttpCode,
+  Delete,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto, RegisterDto, UpdateDto } from './dto/index';
@@ -38,5 +39,12 @@ export class AuthController {
   @Patch('me')
   async update(@Request() req, @Body() updateDto: UpdateDto) {
     return this.authService.update(req.user, updateDto);
+  }
+
+  @UseGuards(JwtGuard)
+  @Delete('me')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async delete(@Request() req) {
+    return this.authService.deleteAccount(req.user);
   }
 }

@@ -14,7 +14,7 @@ export class AuthService {
   ) {}
 
   async register(data: RegisterDto) {
-    const password = await bcrypt.hash(data.password, 10);
+    const password: string = await bcrypt.hash(data.password, 10);
 
     try {
       const user = await this.prisma.user.create({
@@ -80,6 +80,19 @@ export class AuthService {
       });
       delete user.password;
       return user;
+    } catch (error) {
+      throw new ForbiddenException('Something went wrong');
+    }
+  }
+
+  async deleteAccount(payload: { id: string }) {
+    try {
+      await this.prisma.user.delete({
+        where: {
+          id: payload.id,
+        },
+      });
+      return true;
     } catch (error) {
       throw new ForbiddenException('Something went wrong');
     }
