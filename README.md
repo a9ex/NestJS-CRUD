@@ -113,3 +113,8 @@ Returns: a JSON body with product info or `403` if Invalid Credentials
     "_cached": boolean
 }
 ```
+
+## How to run this project ?
+### With Docker
+You can run this project with Docker and Docker Compose. Docker Compose will do everything for you.  
+You just need to run `docker-compose up` and the project will be available on `localhost:3000`.
