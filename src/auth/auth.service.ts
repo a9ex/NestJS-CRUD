@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { LoginDto, RegisterDto, UpdateDto } from './dto/auth.dto';
@@ -41,11 +45,11 @@ export class AuthService {
       },
     });
     if (!user) {
-      throw new ForbiddenException('Wrong email or password');
+      throw new UnauthorizedException('Wrong email or password');
     }
     const passwordValid = await bcrypt.compare(data.password, user.password);
     if (!passwordValid) {
-      throw new ForbiddenException('Wrong email or password');
+      throw new UnauthorizedException('Wrong email or password');
     }
     return {
       token: await this.sign({ id: user.id }),

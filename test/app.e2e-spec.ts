@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import * as pactum from 'pactum';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../src/app.module';
-import { RegisterDto } from '../src/auth/dto';
+import { LoginDto, RegisterDto } from '../src/auth/dto';
 import { PrismaService } from '../src/prisma/prisma.service';
 
 describe('e2e tests', () => {
@@ -84,6 +84,9 @@ describe('e2e tests', () => {
             password: payload.password,
           })
           .expectStatus(201)
+          .expectJsonLike({
+            token: /.*/,
+          })
           .toss();
       });
     });
@@ -99,6 +102,9 @@ describe('e2e tests', () => {
           .post('/auth/register')
           .withJson(payload)
           .expectStatus(201)
+          .expectJsonLike({
+            token: /.*/,
+          })
           .toss();
       });
       it('should throw if email already exists', async () => {
@@ -111,6 +117,167 @@ describe('e2e tests', () => {
             statusCode: 403,
             message: 'Email already exists',
             error: 'Forbidden',
+          })
+          .toss();
+      });
+    });
+    describe('Login KO', () => {
+      const payload: LoginDto = {
+        email: 'john1@doe.com',
+        password: '123456',
+      };
+      it('should throw if email empty', async () => {
+        await pactum
+          .spec()
+          .post('/auth/login')
+          .withJson({
+            password: payload.password,
+          })
+          .expectStatus(400)
+          .expectJson({
+            statusCode: 400,
+            message: ['email should not be empty', 'email must be an email'],
+            error: 'Bad Request',
+          })
+          .toss();
+      });
+      it('should throw if password empty', async () => {
+        await pactum
+          .spec()
+          .post('/auth/login')
+          .withJson({
+            email: payload.email,
+          })
+          .expectStatus(400)
+          .expectJson({
+            statusCode: 400,
+            message: [
+              'password should not be empty',
+              'password must be a string',
+            ],
+            error: 'Bad Request',
+          })
+          .toss();
+      });
+      it('should throw if email not found', async () => {
+        await pactum
+          .spec()
+          .post('/auth/login')
+          .withJson({
+            email: 'aaa@aaa.com',
+            password: payload.password,
+          })
+          .expectStatus(401)
+          .expectJson({
+            statusCode: 401,
+            message: 'Wrong email or password',
+            error: 'Unauthorized',
+          })
+          .toss();
+      });
+      it('should throw if password not found', async () => {
+        await pactum
+          .spec()
+          .post('/auth/login')
+          .withJson({
+            email: payload.email,
+            password: 'aaaa',
+          })
+          .expectStatus(401)
+          .expectJson({
+            statusCode: 401,
+            message: 'Wrong email or password',
+            error: 'Unauthorized',
+          })
+          .toss();
+      });
+    });
+    describe('Login OK', () => {
+      const payload: LoginDto = {
+        email: 'john1@doe.com',
+        password: '123456',
+      };
+      it('should work', async () => {
+        await pactum
+          .spec()
+          .post('/auth/login')
+          .withJson(payload)
+          .expectStatus(200)
+          .expectJsonLike({
+            token: /.*/,
+          })
+          .toss();
+      });
+    });
+    describe('Me', () => {
+      let token: string;
+      beforeAll(async () => {
+        const payload: LoginDto = {
+          email: 'john1@doe.com',
+          password: '123456',
+        };
+        const res = await pactum.spec().post('/auth/login').withJson(payload);
+        token = res.body.token;
+      });
+      it('should work', async () => {
+        await pactum
+          .spec()
+          .get('/auth/me')
+          .withHeaders({
+            Authorization: `Bearer ${token}`,
+          })
+          .expectStatus(200)
+          .expectJsonLike({
+            id: /.*/,
+            email: 'john1@doe.com',
+            username: 'John1 Doe',
+            createdAt: /.*/,
+            updatedAt: /.*/,
+          })
+          .toss();
+      });
+      it('should throw if no token', async () => {
+        await pactum
+          .spec()
+          .get('/auth/me')
+          .expectStatus(401)
+          .expectJson({
+            statusCode: 401,
+            message: 'Unauthorized',
+          })
+          .toss();
+      });
+      it('should throw if invalid token', async () => {
+        await pactum
+          .spec()
+          .get('/auth/me')
+          .withHeaders({
+            Authorization: `Bearer ${token}a`,
+          })
+          .expectStatus(401)
+          .expectJson({
+            statusCode: 401,
+            message: 'Unauthorized',
+          })
+          .toss();
+      });
+      it('should update user', async () => {
+        await pactum
+          .spec()
+          .patch('/auth/me')
+          .withHeaders({
+            Authorization: `Bearer ${token}`,
+          })
+          .withJson({
+            username: 'John1 Doe1',
+          })
+          .expectStatus(200)
+          .expectJsonLike({
+            id: /.*/,
+            email: 'john1@doe.com',
+            username: 'John1 Doe1',
+            createdAt: /.*/,
+            updatedAt: /.*/,
           })
           .toss();
       });
