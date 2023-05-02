@@ -78,6 +78,7 @@ Returns: the current user info or `403` if Invalid Credentials
 
 #### `PATCH /auth/me` : Update current user info.
 Note: This route is authenticated.
+
 Body:
 - `email?`: New user email (optional)
 - `password?`: New user password (optionnal)
