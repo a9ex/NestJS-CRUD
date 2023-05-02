@@ -13,12 +13,13 @@ The goal of this project was to create a NestJS API to retreive barcodes informa
 - Caching System for API Calls
 - Dockerisation
 - Kubernetes Manifest
-
+---
 I was able to do mandatory features and some bonuses including:
 - User Update
 - Get current user info
 - Caching System via `@nestjs/cache-manager` and we can force to not use cache with `?force=true` query param
 - Delete the authenticated user (and invalidate JWT Token)
+- Dockerisation with Docker Compose
 
 ## Stack used
 The choice of databases and the structure of the route were up to us.
@@ -49,7 +50,7 @@ Returns: a JWT Token or an `403` if fields are incorrect.
     "token": "JWT Token"
 }
 ```
-
+---
 #### `POST /auth/login` : Login an user.
 Body:
 - `email`: User email
@@ -61,7 +62,7 @@ Returns: a JWT Token or `403` if Invalid Credentials
     "token": "JWT Token"
 }
 ```
-
+---
 #### `GET /auth/me` : Get current user info.
 Note: This route is authenticated.
 
@@ -75,7 +76,7 @@ Returns: the current user info or `403` if Invalid Credentials
     "updatedAt": date
 }
 ```
-
+---
 #### `PATCH /auth/me` : Update current user info.
 Note: This route is authenticated.
 
@@ -94,13 +95,13 @@ Returns: the updated user info or `403` if Invalid Body
     "updatedAt": date
 }
 ```
-
+---
 #### `DELETE /auth/me` : Delete current user.
 Note: This route is authenticated.
 
 Returns: `204` if success or `403` if Invalid Credentials
 
-
+---
 #### `GET /food/:barcode` : Get product info from OpenFoodFacts API.
 Note: This route is authenticated. This returns an `_cached` optionnal field if the product is returned from cache.
 
