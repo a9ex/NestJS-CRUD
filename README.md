@@ -64,6 +64,7 @@ Returns: a JWT Token or `403` if Invalid Credentials
 
 #### `GET /auth/me` : Get current user info.
 Note: This route is authenticated.
+
 Returns: the current user info or `403` if Invalid Credentials
 ```json
 {
@@ -95,6 +96,7 @@ Returns: the updated user info or `403` if Invalid Body
 
 #### `DELETE /auth/me` : Delete current user.
 Note: This route is authenticated.
+
 Returns: `204` if success or `403` if Invalid Credentials
 
 
@@ -102,6 +104,7 @@ Returns: `204` if success or `403` if Invalid Credentials
 Note: This route is authenticated. This returns an `_cached` optionnal field if the product is returned from cache.
 
 Query Param: `force: boolean` if you want to force the API to not use cached informations.
+
 Returns: a JSON body with product info or `403` if Invalid Credentials
 ```json
 {
