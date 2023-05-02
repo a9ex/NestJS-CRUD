@@ -5,7 +5,7 @@ import { AppModule } from '../src/app.module';
 import { RegisterDto } from '../src/auth/dto';
 import { PrismaService } from '../src/prisma/prisma.service';
 
-describe('AppController (e2e)', () => {
+describe('e2e tests', () => {
   let app: INestApplication;
   let prisma: PrismaService;
 
