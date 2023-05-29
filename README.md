@@ -1,5 +1,7 @@
-# Innovorder NestJS Test
-
+# NestJS Test - Innovorder
+Note: this project was a test for a job offer (Software engineer Intern), where I was hired.  
+Having never done NestJS or TypeScript before this, I decided to leave it on my profile.  
+If you're someone who "stumbles" across this repo in the future because you're doing the same test for the same company, good luck!
 ## Introduction
 The goal of this project was to create a NestJS API to retreive barcodes informations via the OpenFoodFacts API, using authenticated routes.
 
